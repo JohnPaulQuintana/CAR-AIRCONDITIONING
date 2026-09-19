@@ -1,0 +1,54 @@
+risk-frontend/
+│
+├── src/
+│   ├── app/
+│   │   ├── providers/
+│   │   │   ├── QueryProvider.tsx
+│   │   │   └── RouterProvider.tsx
+│   │   │
+│   │   ├── router.tsx
+│   │   └── App.tsx
+│   │
+│   ├── api/
+│   │   ├── client.ts
+│   │   └── endpoints/
+│   │       ├── auth.api.ts
+│   │       └── users.api.ts
+│   │
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── schemas/
+│   │   │   ├── types/
+│   │   │   └── pages/
+│   │   │
+│   │   └── users/
+│   │       ├── components/
+│   │       ├── hooks/
+│   │       ├── schemas/
+│   │       ├── types/
+│   │       └── pages/
+│   │
+│   ├── components/
+│   │   ├── ui/
+│   │   └── layout/
+│   │
+│   ├── hooks/
+│   ├── lib/
+│   │   ├── storage.ts
+│   │   └── utils.ts
+│   │
+│   ├── types/
+│   │   └── api.ts
+│   │
+│   ├── styles/
+│   │   └── index.css
+│   │
+│   └── main.tsx
+│
+├── .env
+├── .env.example
+├── vite.config.ts
+├── tsconfig.json
+└── package.json
