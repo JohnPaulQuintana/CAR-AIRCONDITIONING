@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_authenticated/vehicles/")({
 
 function VehiclesPage() {
   return (
-    <div className="p-8">
+    <div className="md:p-8">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="relative">
