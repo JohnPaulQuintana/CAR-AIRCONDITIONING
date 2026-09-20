@@ -1,3 +1,4 @@
+import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Car,
@@ -103,8 +104,8 @@ function VehicleRecordsPage() {
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[950px]">
-              <thead>
+            <table className="w-full md:min-w-[950px]">
+              <thead className="hidden md:table-header-group">
                 <tr className="border-b border-slate-200 bg-slate-50/70">
                   <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                     Vehicle
@@ -134,142 +135,317 @@ function VehicleRecordsPage() {
 
               <tbody>
                 {isLoading ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-6 py-12 text-center text-sm text-slate-500"
-                    >
-                      Loading vehicle records...
-                    </td>
-                  </tr>
+                  <>
+                    {/* Desktop loading */}
+                    <tr className="hidden md:table-row">
+                      <td
+                        colSpan={6}
+                        className="px-6 py-12 text-center text-sm text-slate-500"
+                      >
+                        Loading vehicle records...
+                      </td>
+                    </tr>
+
+                    {/* Mobile loading */}
+                    <tr className="md:hidden">
+                      <td className="px-4 py-8 text-center text-sm text-slate-500">
+                        Loading vehicle records...
+                      </td>
+                    </tr>
+                  </>
                 ) : isError ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-6 py-12 text-center text-sm text-red-500"
-                    >
-                      Failed to load vehicle records.
-                    </td>
-                  </tr>
+                  <>
+                    {/* Desktop error */}
+                    <tr className="hidden md:table-row">
+                      <td
+                        colSpan={6}
+                        className="px-6 py-12 text-center text-sm text-red-500"
+                      >
+                        Failed to load vehicle records.
+                      </td>
+                    </tr>
+
+                    {/* Mobile error */}
+                    <tr className="md:hidden">
+                      <td className="px-4 py-8 text-center text-sm text-red-500">
+                        Failed to load vehicle records.
+                      </td>
+                    </tr>
+                  </>
                 ) : vehicles.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-6 py-12 text-center text-sm text-slate-500"
-                    >
-                      No vehicle records found.
-                    </td>
-                  </tr>
+                  <>
+                    {/* Desktop empty */}
+                    <tr className="hidden md:table-row">
+                      <td
+                        colSpan={6}
+                        className="px-6 py-12 text-center text-sm text-slate-500"
+                      >
+                        No vehicle records found.
+                      </td>
+                    </tr>
+
+                    {/* Mobile empty */}
+                    <tr className="md:hidden">
+                      <td className="px-4 py-8 text-center text-sm text-slate-500">
+                        No vehicle records found.
+                      </td>
+                    </tr>
+                  </>
                 ) : (
                   vehicles.map((vehicle) => (
-                    <tr
-                      key={vehicle.id}
-                      className="border-b border-slate-100 last:border-0 transition-colors hover:bg-slate-50/70"
-                    >
-                      {/* Vehicle */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#002766]/10">
-                            <Car className="h-5 w-5 text-[#002766]" />
+                    <React.Fragment key={vehicle.id}>
+                      {/* =====================================================
+                          DESKTOP TABLE ROW
+                      ====================================================== */}
+                      <tr className="hidden border-b border-slate-100 last:border-0 transition-colors hover:bg-slate-50/70 md:table-row">
+                        {/* Vehicle */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#002766]/10">
+                              <Car className="h-5 w-5 text-[#002766]" />
+                            </div>
+
+                            <div>
+                              <p className="text-sm font-semibold text-slate-900">
+                                {vehicle.data.make} {vehicle.data.model}
+                              </p>
+
+                              <p className="mt-0.5 text-xs text-slate-500">
+                                {vehicle.data.year || "Year not provided"}
+                              </p>
+                            </div>
                           </div>
+                        </td>
 
-                          <div>
-                            <p className="text-sm font-semibold text-slate-900">
-                              {vehicle.data.make} {vehicle.data.model}
-                            </p>
-
-                            <p className="mt-0.5 text-xs text-slate-500">
-                              {vehicle.data.year || "Year not provided"}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Plate */}
-                      <td className="px-6 py-4">
-                        <span className="inline-flex rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold tracking-wide text-slate-800">
-                          {vehicle.data.plateNumber}
-                        </span>
-                      </td>
-
-                      {/* Owner */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2.5">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100">
-                            <UserRound className="h-4 w-4 text-slate-500" />
-                          </div>
-
-                          <div>
-                            <p className="text-sm font-medium text-slate-700">
-                              {vehicle.data.ownerName}
-                            </p>
-
-                            <p className="mt-0.5 text-xs text-slate-400">
-                              {vehicle.data.contactNumber}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Service Date */}
-                      <td className="px-6 py-4">
-                        {vehicle.data.services?.length ? (
-                          <span className="text-sm text-slate-600">
-                            {new Date(
-                              vehicle.data.services[0].serviceDate,
-                            ).toLocaleDateString([], {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
+                        {/* Plate */}
+                        <td className="px-6 py-4">
+                          <span className="inline-flex rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold tracking-wide text-slate-800">
+                            {vehicle.data.plateNumber}
                           </span>
-                        ) : (
-                          <span className="text-sm text-slate-400">--</span>
-                        )}
-                      </td>
+                        </td>
 
-                      {/* Added */}
-                      <td className="px-6 py-4">
-                        {vehicle.created_at ? (
-                          <>
-                            <span className="text-sm font-medium text-slate-700">
-                              {new Date(vehicle.created_at).toLocaleTimeString(
-                                [],
-                                {
+                        {/* Owner */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100">
+                              <UserRound className="h-4 w-4 text-slate-500" />
+                            </div>
+
+                            <div>
+                              <p className="text-sm font-medium text-slate-700">
+                                {vehicle.data.ownerName}
+                              </p>
+
+                              <p className="mt-0.5 text-xs text-slate-400">
+                                {vehicle.data.contactNumber}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Service Date */}
+                        <td className="px-6 py-4">
+                          {vehicle.data.services?.length ? (
+                            <span className="text-sm text-slate-600">
+                              {new Date(
+                                vehicle.data.services[0].serviceDate,
+                              ).toLocaleDateString([], {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-slate-400">--</span>
+                          )}
+                        </td>
+
+                        {/* Added */}
+                        <td className="px-6 py-4">
+                          {vehicle.created_at ? (
+                            <>
+                              <span className="text-sm font-medium text-slate-700">
+                                {new Date(
+                                  vehicle.created_at,
+                                ).toLocaleTimeString([], {
                                   hour: "numeric",
                                   minute: "2-digit",
-                                },
-                              )}
-                            </span>
+                                })}
+                              </span>
 
-                            <p className="mt-0.5 text-xs text-slate-400">
-                              {new Date(vehicle.created_at).toLocaleDateString(
-                                [],
-                                {
+                              <p className="mt-0.5 text-xs text-slate-400">
+                                {new Date(
+                                  vehicle.created_at,
+                                ).toLocaleDateString([], {
                                   month: "short",
                                   day: "numeric",
                                   year: "numeric",
-                                },
-                              )}
-                            </p>
-                          </>
-                        ) : (
-                          <span className="text-sm text-slate-400">--</span>
-                        )}
-                      </td>
+                                })}
+                              </p>
+                            </>
+                          ) : (
+                            <span className="text-sm text-slate-400">--</span>
+                          )}
+                        </td>
 
-                      {/* Action */}
-                      <td className="px-6 py-4 text-right">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedVehicle(vehicle)}
-                          title="View vehicle"
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-[#002766]/20 hover:bg-[#002766]/10 hover:text-[#002766]"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
+                        {/* Action */}
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedVehicle(vehicle)}
+                            title="View vehicle"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-[#002766]/20 hover:bg-[#002766]/10 hover:text-[#002766]"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+
+                      {/* =====================================================
+            MOBILE CARD
+        ====================================================== */}
+                      <tr className="border-b border-slate-100 md:hidden">
+                        <td className="px-4 py-3">
+                          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                            {/* Card Header */}
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex min-w-0 items-center gap-3">
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary">
+                                  <Car className="h-5 w-5 text-white" />
+                                </div>
+
+                                <div className="min-w-0">
+                                  <p className="truncate text-sm font-bold text-slate-900">
+                                    {vehicle.data.make} {vehicle.data.model}
+                                  </p>
+
+                                  <p className="mt-0.5 text-xs text-slate-500">
+                                    {vehicle.data.year || "Year not provided"}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => setSelectedVehicle(vehicle)}
+                                title="View vehicle"
+                                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-[#002766]/20 hover:bg-[#002766]/10 hover:text-[#002766]"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </button>
+                            </div>
+
+                            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
+                              {/* Plate */}
+                              <div className="min-w-0">
+                                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                  Plate Number
+                                </p>
+
+                                <span className="inline-flex max-w-full truncate rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-bold tracking-wide text-slate-800">
+                                  {vehicle.data.plateNumber}
+                                </span>
+                              </div>
+
+                              {/* Total Services */}
+                              <div className="min-w-0">
+                                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                  Total Services
+                                </p>
+
+                                <span className="inline-flex max-w-full truncate rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-bold tracking-wide text-slate-800">
+                                  {vehicle.data.services?.length ?? 0}{" "}
+                                  {(vehicle.data.services?.length ?? 0) === 1
+                                    ? "Service"
+                                    : "Services"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Owner */}
+                            <div className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-4">
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100">
+                                <UserRound className="h-4 w-4 text-slate-500" />
+                              </div>
+
+                              <div className="min-w-0">
+                                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                  Owner
+                                </p>
+
+                                <p className="break-words text-sm font-medium text-slate-700">
+                                  {vehicle.data.ownerName}
+                                </p>
+
+                                <p className="truncate text-xs text-slate-400">
+                                  {vehicle.data.contactNumber}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Dates */}
+                            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
+                              {/* Service Date */}
+                              <div>
+                                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                  Service Date
+                                </p>
+
+                                {vehicle.data.services?.length ? (
+                                  <p className="mt-1 text-sm font-medium text-slate-700">
+                                    {new Date(
+                                      vehicle.data.services[0].serviceDate,
+                                    ).toLocaleDateString([], {
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    })}
+                                  </p>
+                                ) : (
+                                  <p className="mt-1 text-sm text-slate-400">
+                                    --
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Added */}
+                              <div>
+                                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                  Created
+                                </p>
+
+                                {vehicle.created_at ? (
+                                  <>
+                                    <p className="mt-1 text-sm font-medium text-slate-700">
+                                      {new Date(
+                                        vehicle.created_at,
+                                      ).toLocaleTimeString([], {
+                                        hour: "numeric",
+                                        minute: "2-digit",
+                                      })}
+                                    </p>
+
+                                    <p className="text-xs text-slate-400">
+                                      {new Date(
+                                        vehicle.created_at,
+                                      ).toLocaleDateString([], {
+                                        month: "short",
+                                        day: "numeric",
+                                        year: "numeric",
+                                      })}
+                                    </p>
+                                  </>
+                                ) : (
+                                  <p className="mt-1 text-sm text-slate-400">
+                                    --
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </React.Fragment>
                   ))
                 )}
               </tbody>

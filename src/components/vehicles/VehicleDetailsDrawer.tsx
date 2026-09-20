@@ -345,8 +345,14 @@ export function VehicleDetailsDrawer({
             <section className="mt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-primary">
+                  <h3 className="flex items-center gap-2 text-sm font-bold text-primary">
                     Service History
+                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                      {vehicle.data.services?.length ?? 0}{" "}
+                      {(vehicle.data.services?.length ?? 0) === 1
+                        ? "Service"
+                        : "Services"}
+                    </span>
                   </h3>
 
                   <p className="mt-1 text-xs text-slate-500">
