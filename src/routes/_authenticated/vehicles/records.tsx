@@ -37,6 +37,15 @@ function VehicleRecordsPage() {
 
   const vehicles = data?.data ?? [];
 
+  const parseServices = (value?: string) => {
+    if (!value) return [];
+
+    return value
+      .split(/,(?![^(]*\))/)
+      .map((service) => service.trim())
+      .filter(Boolean);
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearch(searchInput.trim());
@@ -194,123 +203,159 @@ function VehicleRecordsPage() {
                 ) : (
                   vehicles.map((vehicle) => (
                     <React.Fragment key={vehicle.id}>
-                      {/* =====================================================
-                          DESKTOP TABLE ROW
-                      ====================================================== */}
-                      <tr className="hidden border-b border-slate-100 last:border-0 transition-colors hover:bg-slate-50/70 md:table-row">
-                        {/* Vehicle */}
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#002766]/10">
-                              <Car className="h-5 w-5 text-[#002766]" />
+                      <>
+                        {/* =====================================================
+                            MAIN VEHICLE ROW
+                        ====================================================== */}
+                        <tr className="hidden border-b border-slate-100 transition-colors hover:bg-slate-50/70 md:table-row">
+                          {/* Vehicle */}
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#002766]/10">
+                                <Car className="h-5 w-5 text-[#002766]" />
+                              </div>
+
+                              <div>
+                                <p className="text-sm font-semibold text-slate-900">
+                                  {vehicle.data.make} {vehicle.data.model}
+                                </p>
+
+                                <p className="mt-0.5 text-xs text-slate-500">
+                                  {vehicle.data.year || "Year not provided"}
+                                </p>
+                              </div>
                             </div>
+                          </td>
 
-                            <div>
-                              <p className="text-sm font-semibold text-slate-900">
-                                {vehicle.data.make} {vehicle.data.model}
-                              </p>
-
-                              <p className="mt-0.5 text-xs text-slate-500">
-                                {vehicle.data.year || "Year not provided"}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Plate */}
-                        <td className="px-6 py-4">
-                          <span className="inline-flex rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold tracking-wide text-slate-800">
-                            {vehicle.data.plateNumber}
-                          </span>
-                        </td>
-
-                        {/* Owner */}
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100">
-                              <UserRound className="h-4 w-4 text-slate-500" />
-                            </div>
-
-                            <div>
-                              <p className="text-sm font-medium text-slate-700">
-                                {vehicle.data.ownerName}
-                              </p>
-
-                              <p className="mt-0.5 text-xs text-slate-400">
-                                {vehicle.data.contactNumber}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Service Date */}
-                        <td className="px-6 py-4">
-                          {vehicle.data.services?.length ? (
-                            <span className="text-sm text-slate-600">
-                              {new Date(
-                                vehicle.data.services[0].serviceDate,
-                              ).toLocaleDateString([], {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              })}
+                          {/* Plate */}
+                          <td className="px-6 py-4">
+                            <span className="inline-flex rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold tracking-wide text-slate-800">
+                              {vehicle.data.plateNumber}
                             </span>
-                          ) : (
-                            <span className="text-sm text-slate-400">--</span>
-                          )}
-                        </td>
+                          </td>
 
-                        {/* Added */}
-                        <td className="px-6 py-4">
-                          {vehicle.created_at ? (
-                            <>
-                              <span className="text-sm font-medium text-slate-700">
-                                {new Date(
-                                  vehicle.created_at,
-                                ).toLocaleTimeString([], {
-                                  hour: "numeric",
-                                  minute: "2-digit",
-                                })}
-                              </span>
+                          {/* Owner */}
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2.5">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100">
+                                <UserRound className="h-4 w-4 text-slate-500" />
+                              </div>
 
-                              <p className="mt-0.5 text-xs text-slate-400">
+                              <div>
+                                <p className="text-sm font-medium text-slate-700">
+                                  {vehicle.data.ownerName}
+                                </p>
+
+                                <p className="mt-0.5 text-xs text-slate-400">
+                                  {vehicle.data.contactNumber}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Service Date */}
+                          <td className="px-6 py-4">
+                            {vehicle.data.services?.length ? (
+                              <span className="text-sm text-slate-600">
                                 {new Date(
-                                  vehicle.created_at,
+                                  vehicle.data.services[0].serviceDate,
                                 ).toLocaleDateString([], {
                                   month: "short",
                                   day: "numeric",
                                   year: "numeric",
                                 })}
-                              </p>
-                            </>
-                          ) : (
-                            <span className="text-sm text-slate-400">--</span>
-                          )}
-                        </td>
+                              </span>
+                            ) : (
+                              <span className="text-sm text-slate-400">--</span>
+                            )}
+                          </td>
 
-                        {/* Action */}
-                        <td className="px-6 py-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedVehicle(vehicle)}
-                            title="View vehicle"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-[#002766]/20 hover:bg-[#002766]/10 hover:text-[#002766]"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-                        </td>
-                      </tr>
+                          {/* Added */}
+                          <td className="px-6 py-4">
+                            {vehicle.created_at ? (
+                              <>
+                                <span className="text-sm font-medium text-slate-700">
+                                  {new Date(
+                                    vehicle.created_at,
+                                  ).toLocaleTimeString([], {
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                  })}
+                                </span>
+
+                                <p className="mt-0.5 text-xs text-slate-400">
+                                  {new Date(
+                                    vehicle.created_at,
+                                  ).toLocaleDateString([], {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })}
+                                </p>
+                              </>
+                            ) : (
+                              <span className="text-sm text-slate-400">--</span>
+                            )}
+                          </td>
+
+                          {/* Action */}
+                          <td className="px-6 py-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedVehicle(vehicle)}
+                              title="View vehicle"
+                              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-[#002766]/20 hover:bg-[#002766]/10 hover:text-[#002766]"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                          </td>
+                        </tr>
+
+                        {/* =====================================================
+                              SERVICE PERFORMED — FULL WIDTH
+                          ====================================================== */}
+                        <tr className="hidden border-b border-slate-100 md:table-row">
+                          <td colSpan={6} className="px-6 pb-4">
+                            <div className="flex flex-col items-start gap-2">
+                              <p className="shrink-0 pt-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                                Service Performed
+                              </p>
+
+                              <div className="flex flex-wrap gap-2">
+                                {vehicle.data.services?.length ? (
+                                  parseServices(
+                                    vehicle.data.services[0].servicePerformed,
+                                  ).map((service, index) => (
+                                    <span
+                                      key={`${service}-${index}`}
+                                      className="inline-flex items-center rounded-lg border border-[#002766]/15 bg-[#002766]/5 px-3 py-1.5 text-xs font-semibold text-[#002766]"
+                                    >
+                                      {service}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <span className="text-sm text-slate-400">
+                                    --
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </>
 
                       {/* =====================================================
-            MOBILE CARD
-        ====================================================== */}
+    MOBILE CARD
+====================================================== */}
                       <tr className="border-b border-slate-100 md:hidden">
-                        <td className="px-4 py-3">
-                          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                            {/* Card Header */}
-                            <div className="flex items-start justify-between gap-3">
+                        <td className="px-3 py-3">
+                          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                            {/* =====================================================
+          CARD HEADER
+      ====================================================== */}
+                            <div className="flex items-center justify-between gap-3 px-4 py-4">
                               <div className="flex min-w-0 items-center gap-3">
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary">
                                   <Car className="h-5 w-5 text-white" />
                                 </div>
 
@@ -329,118 +374,159 @@ function VehicleRecordsPage() {
                                 type="button"
                                 onClick={() => setSelectedVehicle(vehicle)}
                                 title="View vehicle"
-                                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-[#002766]/20 hover:bg-[#002766]/10 hover:text-[#002766]"
+                                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition hover:border-[#002766]/20 hover:bg-[#002766]/5 hover:text-[#002766]"
                               >
                                 <Eye className="h-4 w-4" />
                               </button>
                             </div>
 
-                            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
-                              {/* Plate */}
-                              <div className="min-w-0">
-                                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                                  Plate Number
-                                </p>
+                            {/* =====================================================
+          VEHICLE SUMMARY
+      ====================================================== */}
+                            <div className="border-t border-slate-100 px-4 py-3.5">
+                              <div className="grid grid-cols-2 gap-4">
+                                {/* Plate */}
+                                <div className="min-w-0">
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    Plate Number
+                                  </p>
 
-                                <span className="inline-flex max-w-full truncate rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-bold tracking-wide text-slate-800">
-                                  {vehicle.data.plateNumber}
-                                </span>
-                              </div>
+                                  <p className="mt-1.5 truncate text-sm font-bold tracking-wide text-slate-800">
+                                    {vehicle.data.plateNumber}
+                                  </p>
+                                </div>
 
-                              {/* Total Services */}
-                              <div className="min-w-0">
-                                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                                  Total Services
-                                </p>
+                                {/* Total Services */}
+                                <div className="min-w-0">
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    Total Services
+                                  </p>
 
-                                <span className="inline-flex max-w-full truncate rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-bold tracking-wide text-slate-800">
-                                  {vehicle.data.services?.length ?? 0}{" "}
-                                  {(vehicle.data.services?.length ?? 0) === 1
-                                    ? "Service"
-                                    : "Services"}
-                                </span>
+                                  <p className="mt-1.5 text-sm font-bold text-slate-800">
+                                    {vehicle.data.services?.length ?? 0}{" "}
+                                    {(vehicle.data.services?.length ?? 0) === 1
+                                      ? "Service"
+                                      : "Services"}
+                                  </p>
+                                </div>
                               </div>
                             </div>
 
-                            {/* Owner */}
-                            <div className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-4">
-                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100">
-                                <UserRound className="h-4 w-4 text-slate-500" />
-                              </div>
+                            {/* =====================================================
+          OWNER
+      ====================================================== */}
+                            <div className="border-t border-slate-100 px-4 py-3.5">
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100">
+                                  <UserRound className="h-4 w-4 text-slate-500" />
+                                </div>
 
-                              <div className="min-w-0">
-                                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                                  Owner
-                                </p>
+                                <div className="min-w-0">
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    Owner
+                                  </p>
 
-                                <p className="break-words text-sm font-medium text-slate-700">
-                                  {vehicle.data.ownerName}
-                                </p>
+                                  <p className="mt-1 truncate text-sm font-semibold text-slate-700">
+                                    {vehicle.data.ownerName}
+                                  </p>
 
-                                <p className="truncate text-xs text-slate-400">
-                                  {vehicle.data.contactNumber}
-                                </p>
+                                  <p className="mt-0.5 truncate text-xs text-slate-400">
+                                    {vehicle.data.contactNumber}
+                                  </p>
+                                </div>
                               </div>
                             </div>
 
-                            {/* Dates */}
-                            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
-                              {/* Service Date */}
-                              <div>
-                                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                                  Service Date
-                                </p>
-
-                                {vehicle.data.services?.length ? (
-                                  <p className="mt-1 text-sm font-medium text-slate-700">
-                                    {new Date(
-                                      vehicle.data.services[0].serviceDate,
-                                    ).toLocaleDateString([], {
-                                      month: "short",
-                                      day: "numeric",
-                                      year: "numeric",
-                                    })}
+                            {/* =====================================================
+          DATES
+      ====================================================== */}
+                            <div className="border-t border-slate-100 px-4 py-3.5">
+                              <div className="grid grid-cols-2 gap-4">
+                                {/* Service Date */}
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    Service Date
                                   </p>
-                                ) : (
-                                  <p className="mt-1 text-sm text-slate-400">
-                                    --
-                                  </p>
-                                )}
-                              </div>
 
-                              {/* Added */}
-                              <div>
-                                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                                  Created
-                                </p>
-
-                                {vehicle.created_at ? (
-                                  <>
-                                    <p className="mt-1 text-sm font-medium text-slate-700">
+                                  {vehicle.data.services?.length ? (
+                                    <p className="mt-1.5 text-sm font-semibold text-slate-700">
                                       {new Date(
-                                        vehicle.created_at,
-                                      ).toLocaleTimeString([], {
-                                        hour: "numeric",
-                                        minute: "2-digit",
-                                      })}
-                                    </p>
-
-                                    <p className="text-xs text-slate-400">
-                                      {new Date(
-                                        vehicle.created_at,
+                                        vehicle.data.services[0].serviceDate,
                                       ).toLocaleDateString([], {
                                         month: "short",
                                         day: "numeric",
                                         year: "numeric",
                                       })}
                                     </p>
-                                  </>
-                                ) : (
-                                  <p className="mt-1 text-sm text-slate-400">
-                                    --
+                                  ) : (
+                                    <p className="mt-1.5 text-sm text-slate-400">
+                                      --
+                                    </p>
+                                  )}
+                                </div>
+
+                                {/* Created */}
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    Created
                                   </p>
-                                )}
+
+                                  {vehicle.created_at ? (
+                                    <div className="mt-1.5">
+                                      <p className="text-sm font-semibold text-slate-700">
+                                        {new Date(
+                                          vehicle.created_at,
+                                        ).toLocaleTimeString([], {
+                                          hour: "numeric",
+                                          minute: "2-digit",
+                                        })}
+                                      </p>
+
+                                      <p className="mt-0.5 text-xs text-slate-400">
+                                        {new Date(
+                                          vehicle.created_at,
+                                        ).toLocaleDateString([], {
+                                          month: "short",
+                                          day: "numeric",
+                                          year: "numeric",
+                                        })}
+                                      </p>
+                                    </div>
+                                  ) : (
+                                    <p className="mt-1.5 text-sm text-slate-400">
+                                      --
+                                    </p>
+                                  )}
+                                </div>
                               </div>
+                            </div>
+
+                            {/* =====================================================
+          SERVICE PERFORMED
+      ====================================================== */}
+                            <div className="border-t border-slate-100 px-4 py-3.5">
+                              <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                Service Performed
+                              </p>
+
+                              {vehicle.data.services?.length ? (
+                                <div className="flex flex-wrap gap-1.5">
+                                  {parseServices(
+                                    vehicle.data.services[0].servicePerformed,
+                                  ).map((service, index) => (
+                                    <span
+                                      key={`${service}-${index}`}
+                                      className="inline-flex max-w-full items-center rounded-md border border-[#002766]/15 bg-[#002766]/5 px-2.5 py-1.5 text-xs font-semibold leading-4 text-[#002766]"
+                                    >
+                                      {service}
+                                    </span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="text-sm text-slate-400">
+                                  --
+                                </span>
+                              )}
                             </div>
                           </div>
                         </td>
